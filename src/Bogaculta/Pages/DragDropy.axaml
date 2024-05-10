@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Bogaculta.DragDropy"
+             Loaded="OnLoaded">
+
+    <StackPanel Orientation="Vertical" Spacing="4">
+        <TextBlock x:Name="FileInfo" Classes="h2">---</TextBlock>
+
+        <WrapPanel HorizontalAlignment="Center">
+            <StackPanel Margin="8"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                <Border Name="MoveTarget"
+                        Padding="16"
+                        MaxWidth="260"
+                        Background="{DynamicResource SystemAccentColorDark1}"
+                        DragDrop.AllowDrop="True"
+                        x:Name="FileBox">
+                    <TextBlock TextWrapping="Wrap">Drop some text or files here (Move)</TextBlock>
+                </Border>
+            </StackPanel>
+        </WrapPanel>
+
+        <TextBlock x:Name="DropState" TextWrapping="Wrap" />
+    </StackPanel>
+
+</UserControl>

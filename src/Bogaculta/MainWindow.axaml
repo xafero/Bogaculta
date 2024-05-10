@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        d:DesignWidth="800" d:DesignHeight="450"
+        Width="800" Height="450" 
+        xmlns:local="clr-namespace:Bogaculta"
+        x:Class="Bogaculta.MainWindow"
+        Title="Bogaculta">
+
+    <StackPanel>
+		<local:DragDropy />
+
+		<!--
+        <Rectangle Height="250" Width="250" Fill="Wheat"
+                   DragEnter="FileBox_OnDragEnter" DragLeave="FileBox_OnDragLeave"
+                   DragOver="FileBox_OnDragOver" Drop="FileBox_OnDrop" />
+				   -->
+
+        <Button Content="Exit" HorizontalAlignment="Left" 
+                Margin="197,187,0,0" VerticalAlignment="Top"/>
+    </StackPanel>
+
+</Window>
