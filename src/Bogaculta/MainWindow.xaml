@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="Bogaculta" Height="450" Width="800">
     <Grid>
+        <Rectangle Height="250" Width="250" Fill="Blue"
+                 AllowDrop="True" 
+                 DragEnter="FileBox_OnDragEnter" DragLeave="FileBox_OnDragLeave"
+                 DragOver="FileBox_OnDragOver" Drop="FileBox_OnDrop" />
 
+        <Button Content="Exit" HorizontalAlignment="Left" 
+                Margin="197,187,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
