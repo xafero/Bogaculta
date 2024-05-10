@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -34,7 +35,12 @@ namespace Bogaculta
                 e.DragEffects = DragDropEffects.None;
         }
 
-        private async void OnDrop(object? sender, DragEventArgs e)
+        private void OnDrop(object? sender, DragEventArgs e)
+        {
+            OnDrop(sender, new DragEventX(e));
+        }
+
+        private async void OnDrop(object? sender, DragEventX e)
         {
             if (e.Source is Control { Name: nameof(FileBox) })
                 e.DragEffects &= DragDropEffects.Move;
@@ -67,6 +73,33 @@ namespace Bogaculta
                 var files = e.Data.GetFileNames();
                 // TODO Handle file names!
             }
+        }
+
+        private async void FileBox_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            var sp = TopLevel.GetTopLevel(this)!.StorageProvider;
+            var data = new DataObject();
+            
+            var point = e.GetCurrentPoint(sender as Control);
+            if (point.Properties.IsRightButtonPressed)
+            {
+                var folders = await sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                {
+                    Title = "Choose folder"
+                });
+
+                data.Set(DataFormats.Files, folders);
+                OnDrop(sender, new DragEventX(sender, data, DragDropEffects.Move));
+                return;
+            }
+
+            var files = await sp.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Choose file"
+            });
+
+            data.Set(DataFormats.Files, files);
+            OnDrop(sender, new DragEventX(sender, data, DragDropEffects.Move));
         }
     }
 }

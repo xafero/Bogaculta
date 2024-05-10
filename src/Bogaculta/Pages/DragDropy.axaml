@@ -18,8 +18,9 @@
                         MaxWidth="260"
                         Background="{DynamicResource SystemAccentColorDark1}"
                         DragDrop.AllowDrop="True"
+                        PointerPressed="FileBox_OnPointerPressed"
                         x:Name="FileBox">
-                    <TextBlock TextWrapping="Wrap">Drop some text or files here (Move)</TextBlock>
+                    <TextBlock TextWrapping="Wrap">Drop files here</TextBlock>
                 </Border>
             </StackPanel>
         </WrapPanel>
