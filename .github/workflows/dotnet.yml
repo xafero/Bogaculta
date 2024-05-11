@@ -34,10 +34,14 @@ jobs:
       run: dotnet test --configuration Release --no-build
 
     - name: Publish
-      run: dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist
+      run: |
+        mkdir dist
+        dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist/linux
+        dotnet publish --configuration Release -r win-x64   -p:PublishSingleFile=true --self-contained true -o dist/win
+        dotnet publish --configuration Release -r osx-x64   -p:PublishSingleFile=true --self-contained true -o dist/mac
 
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: All results
+        name: All executables
         path: src/dist
