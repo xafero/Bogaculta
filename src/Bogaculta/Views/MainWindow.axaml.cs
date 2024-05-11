@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Bogaculta.Models;
 using Bogaculta.Tools;
 
 #pragma warning disable CS0618
@@ -133,6 +134,7 @@ namespace Bogaculta.Views
             if (Directory.Exists(path))
             {
                 var dir = new DirectoryInfo(path);
+                var job = new Job();
                 // TODO ?!
             }
             else if (File.Exists(path))

@@ -34,7 +34,7 @@ jobs:
       run: dotnet test --configuration Release --no-build
 
     - name: Publish (L)
-      run: dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist_linux
+      run: dotnet publish Bogaculta --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist_linux
 
     - name: Upload (L)
       uses: actions/upload-artifact@v4
@@ -43,7 +43,7 @@ jobs:
         path: src/dist_linux
 
     - name: Publish (W)
-      run: dotnet publish --configuration Release -r win-x64   -p:PublishSingleFile=true --self-contained true -o dist_win
+      run: dotnet publish Bogaculta --configuration Release -r win-x64   -p:PublishSingleFile=true --self-contained true -o dist_win
   
     - name: Upload (W)
       uses: actions/upload-artifact@v4
@@ -52,7 +52,7 @@ jobs:
         path: src/dist_win
 
     - name: Publish (M)
-      run: dotnet publish --configuration Release -r osx-x64   -p:PublishSingleFile=true --self-contained true -o dist_mac
+      run: dotnet publish Bogaculta --configuration Release -r osx-x64   -p:PublishSingleFile=true --self-contained true -o dist_mac
     
     - name: Upload (M)
       uses: actions/upload-artifact@v4
