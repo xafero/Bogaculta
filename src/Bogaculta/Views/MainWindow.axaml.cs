@@ -1,13 +1,13 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Input;
-using System;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Bogaculta.Tools;
 
 #pragma warning disable CS0618
 
-namespace Bogaculta
+namespace Bogaculta.Views
 {
     public partial class MainWindow : Window
     {

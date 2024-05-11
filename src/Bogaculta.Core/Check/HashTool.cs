@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Bogaculta.Tools
+namespace Bogaculta.Check
 {
     internal static class HashTool
     {

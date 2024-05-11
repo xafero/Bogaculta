@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bogaculta", "Bogaculta\Bogaculta.csproj", "{9E859621-65A4-46E5-84CF-CE95DEB628CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bogaculta.Core", "Bogaculta.Core\Bogaculta.Core.csproj", "{08A617D4-5710-4338-9FAA-63282764CB11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9E859621-65A4-46E5-84CF-CE95DEB628CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E859621-65A4-46E5-84CF-CE95DEB628CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E859621-65A4-46E5-84CF-CE95DEB628CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08A617D4-5710-4338-9FAA-63282764CB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08A617D4-5710-4338-9FAA-63282764CB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08A617D4-5710-4338-9FAA-63282764CB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08A617D4-5710-4338-9FAA-63282764CB11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

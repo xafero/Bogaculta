@@ -7,7 +7,7 @@
         mc:Ignorable="d" 
         d:DesignWidth="800" d:DesignHeight="450"
         Width="800" Height="450" 
-        x:Class="Bogaculta.MainWindow"
+        x:Class="Bogaculta.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="Bogaculta"
