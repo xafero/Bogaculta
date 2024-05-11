@@ -33,15 +33,29 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-build
 
-    - name: Publish
-      run: |
-        mkdir dist
-        dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist/linux
-        dotnet publish --configuration Release -r win-x64   -p:PublishSingleFile=true --self-contained true -o dist/win
-        dotnet publish --configuration Release -r osx-x64   -p:PublishSingleFile=true --self-contained true -o dist/mac
+    - name: Publish (L)
+      run: dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -o dist_linux
 
-    - name: Upload
+    - name: Upload (L)
       uses: actions/upload-artifact@v4
       with:
-        name: All executables
-        path: src/dist
+        name: Linux executable
+        path: src/dist_linux
+
+    - name: Publish (W)
+      run: dotnet publish --configuration Release -r win-x64   -p:PublishSingleFile=true --self-contained true -o dist_win
+  
+    - name: Upload (W)
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows executable
+        path: src/dist_win
+
+    - name: Publish (M)
+      run: dotnet publish --configuration Release -r osx-x64   -p:PublishSingleFile=true --self-contained true -o dist_mac
+    
+    - name: Upload (M)
+      uses: actions/upload-artifact@v4
+      with:
+        name: Mac executable
+        path: src/dist_mac
