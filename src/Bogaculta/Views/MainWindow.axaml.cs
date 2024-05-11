@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -16,7 +18,7 @@ namespace Bogaculta.Views
             InitializeComponent();
         }
 
-        private void OnLoaded(object? sender, RoutedEventArgs e)
+        private void OnLoaded(object? _, RoutedEventArgs e)
         {
             FileBox.AddHandler(DragDrop.DropEvent, OnDrop);
             FileBox.AddHandler(DragDrop.DragOverEvent, OnDragOver);
@@ -37,7 +39,7 @@ namespace Bogaculta.Views
             OnDrop(sender, new DragEventX(e));
         }
 
-        private async void OnDrop(object? sender, DragEventX e)
+        private void OnDrop(object? _, DragEventX e)
         {
             if (e.Source is Control { Name: nameof(FileBox) })
                 e.DragEffects &= DragDropEffects.Move;
@@ -47,31 +49,38 @@ namespace Bogaculta.Views
 
             if (e.Data.Contains(DataFormats.Text))
             {
-                // TODO var text = e.Data.GetText();
+                var text = e.Data.GetText();
+                if (string.IsNullOrWhiteSpace(text))
+                    return;
+                var lines = text.Split('\n').Select(l => l.Trim())
+                    .Where(l => !string.IsNullOrWhiteSpace(l));
+                foreach (var line in lines)
+                    AddFileOrFolder(line);
+                return;
             }
-            else if (e.Data.Contains(DataFormats.Files))
+
+            if (e.Data.Contains(DataFormats.Files))
             {
-                var files = e.Data.GetFiles() ?? Array.Empty<IStorageItem>();
+                var files = e.Data.GetFiles();
+                if (files == null)
+                    return;
                 foreach (var item in files)
                 {
                     if (item is IStorageFile file)
-                    {
-                        // FileInfo.Text = file.Name + " | " + file.Path;
-                        // TODO Handle file
-                    }
+                        AddFileOrFolder(file.Path);
                     else if (item is IStorageFolder folder)
-                    {
-                        await foreach (var _ in folder.GetItemsAsync())
-                        {
-                            // TODO Handle Folder
-                        }
-                    }
+                        AddFileOrFolder(folder.Path);
                 }
+                return;
             }
-            else if (e.Data.Contains(DataFormats.FileNames))
+
+            if (e.Data.Contains(DataFormats.FileNames))
             {
                 var files = e.Data.GetFileNames();
-                // TODO Handle file names!
+                if (files == null)
+                    return;
+                foreach (var file in files)
+                    AddFileOrFolder(file);
             }
         }
 
@@ -110,6 +119,27 @@ namespace Bogaculta.Views
         private void Quit()
         {
             Close();
+        }
+
+        private void AddFileOrFolder(Uri uri)
+        {
+            var path = uri.AbsolutePath;
+            AddFileOrFolder(path);
+        }
+
+        private void AddFileOrFolder(string path)
+        {
+            path = Path.GetFullPath(path);
+            if (Directory.Exists(path))
+            {
+                var dir = new DirectoryInfo(path);
+                // TODO ?!
+            }
+            else if (File.Exists(path))
+            {
+                var file = new FileInfo(path);
+                // TODO ?!
+            }
         }
     }
 }
