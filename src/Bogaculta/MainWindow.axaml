@@ -7,19 +7,34 @@
         Width="800" Height="450" 
         xmlns:local="clr-namespace:Bogaculta"
         x:Class="Bogaculta.MainWindow"
-        Title="Bogaculta">
+        Title="Bogaculta"
+        Loaded="OnLoaded">
 
-    <StackPanel>
-		<local:DragDropy />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
 
-		<!--
-        <Rectangle Height="250" Width="250" Fill="Wheat"
-                   DragEnter="FileBox_OnDragEnter" DragLeave="FileBox_OnDragLeave"
-                   DragOver="FileBox_OnDragOver" Drop="FileBox_OnDrop" />
-				   -->
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
+                Margin="32" Padding="16"
+                Background="DarkSlateBlue" 
+                DragDrop.AllowDrop="True"
+                PointerPressed="FileBox_OnPointerPressed"
+                x:Name="FileBox">
+            <TextBlock Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       FontSize="22" FontStyle="Italic" TextWrapping="Wrap">Drop files here</TextBlock>
+        </Border>
 
-        <Button Content="Exit" HorizontalAlignment="Left" 
-                Margin="197,187,0,0" VerticalAlignment="Top"/>
-    </StackPanel>
+        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Click="Quit_OnClick"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap">Quit</TextBlock>
+        </Button>
+
+    </Grid>
 
 </Window>

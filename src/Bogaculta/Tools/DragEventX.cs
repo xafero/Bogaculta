@@ -1,6 +1,6 @@
 using Avalonia.Input;
 
-namespace Bogaculta
+namespace Bogaculta.Tools
 {
     public sealed class DragEventX
     {
