@@ -1,14 +1,15 @@
 using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Bogaculta.Models
 {
-    public sealed class Job
+    public partial class Job : ObservableObject
     {
         public const string None = "<?>";
 
-        public FileSystemInfo Source { get; set; }
+        [ObservableProperty] private FileSystemInfo _source;
 
-        public JobKind Kind { get; set; }
+        [ObservableProperty] private JobKind _kind;
 
         public string Parent => (Source as FileInfo)?.DirectoryName ??
                                 (Source as DirectoryInfo)?.Parent?.FullName ?? None;
@@ -16,8 +17,8 @@ namespace Bogaculta.Models
         public string Name => (Source as FileInfo)?.Name ??
                               (Source as DirectoryInfo)?.Name ?? None;
 
-        public string Worker { get; set; }
+        [ObservableProperty] private string _worker;
 
-        public string Result { get; set; }
+        [ObservableProperty] private string _result;
     }
 }

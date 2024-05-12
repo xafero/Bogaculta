@@ -18,7 +18,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-	<Grid ShowGridLines="True">
+	<Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition />
 			<RowDefinition Height="Auto" />

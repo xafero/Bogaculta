@@ -23,7 +23,7 @@ namespace Bogaculta.Routing
                 return control;
             }
 
-            return new TextBlock { Text = "Not Found: " + name };
+            return new TextBlock { Text = $"Not Found: {name}" };
         }
 
         public bool Match(object? data)

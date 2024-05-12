@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Bogaculta.Check;
 using Bogaculta.Models;
 
 namespace Bogaculta.Proc
@@ -44,7 +45,15 @@ namespace Bogaculta.Proc
                     var threadId = thread.ManagedThreadId;
 
                     task.Worker = $"{threadId}";
-                    Thread.Sleep(100);
+                    switch (task.Kind)
+                    {
+                        case JobKind.Sha256:
+                            HashTask.DoHash(task);
+                            break;
+                        default:
+                            task.SetError("Kind is unspecified!");
+                            break;
+                    }
                 }
             }
         }
