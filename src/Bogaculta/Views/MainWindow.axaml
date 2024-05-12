@@ -21,7 +21,8 @@
 	<Grid ShowGridLines="True">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -47,7 +48,17 @@
         <Button Grid.Row="1" Grid.Column="2" Content="..." Margin="15"
                 Click="OutFolder_OnClick" />
 
-		<StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
+		<DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+            x:Name="LogGrid" IsReadOnly="True" AutoGenerateColumns="False"
+            ItemsSource="{Binding Jobs}" Margin="15">
+		    <DataGrid.Columns>
+			    <DataGridTextColumn Header="Kind" Width="*" Binding="{Binding Kind}"></DataGridTextColumn>
+			    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"></DataGridTextColumn>
+			    <DataGridTextColumn Header="Parent" Width="*" Binding="{Binding Parent}"></DataGridTextColumn>
+		    </DataGrid.Columns>
+		</DataGrid>
+
+		<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
                     Orientation="Horizontal" HorizontalAlignment="Center" Margin="15">
             <Button Click="Quit_OnClick">
                 <TextBlock FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap">Quit</TextBlock>
