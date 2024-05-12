@@ -6,7 +6,7 @@ namespace Bogaculta.Proc
     {
         public static void SetError(this Job job, string text)
         {
-            job.Result = $"[ERROR] {text}";
+            job.Result = $"[ERR] {text}";
         }
     }
 }

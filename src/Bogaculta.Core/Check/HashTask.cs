@@ -31,42 +31,74 @@ namespace Bogaculta.Check
             }
         }
 
+        public static async Task VerifyFile(Job job, FileInfo fi, string aName,
+            CancellationToken token, HashAlgorithm algo)
+        {
+            var fVerified = default(bool?);
+            var fHashes = ReadHashFile(fi.FullName, aName, false);
+            var fHash = fHashes.SingleOrDefault();
+            if (fHash != null)
+            {
+                var single = await fHash.Lazy.Hash(token);
+                if (!string.IsNullOrWhiteSpace(single))
+                {
+                    var newFHash = HashOneFile(algo, fi);
+                    var newFHashH = await newFHash.Lazy.Hash(token);
+                    fVerified = HashTool.VerifyHash(single, newFHashH);
+                }
+            }
+            job.Result = $"[{aName}] {fVerified.GetText()}";
+        }
+
+        public static async Task VerifyDir(Job job, DirectoryInfo di, string aName,
+            CancellationToken token, HashAlgorithm algo)
+        {
+            var newDHash = HashOneDir(algo, di);
+            var dHashes = ReadHashFile(newDHash.Path, aName, true);
+            var dVerified = new List<bool?>();
+            foreach (var dItem in dHashes)
+            {
+                var dFound = newDHash.Hashes.FirstOrDefault(x => x.Path == dItem.Path);
+                var dFirst = dFound == null ? null : await dFound.Lazy.Hash(token);
+                var dSecond = await dItem.Lazy.Hash(token);
+                dVerified.Add(HashTool.VerifyHash(dFirst, dSecond));
+            }
+            var debug = string.Join("|", dVerified.Select(d => d.GetText()[0]));
+            job.Result = $"[{aName}] {debug}";
+        }
+
         public static async Task DoVerify(Job job, CancellationToken token)
         {
             using var algo = HashTool.GetHashAlgo();
             var aName = algo.GetTypeName();
             if (job.Source is FileInfo fi)
             {
-                var fVerified = default(bool?);
-                var fHashes = ReadHashFile(fi.FullName, aName, false);
-                var fHash = fHashes.SingleOrDefault();
-                if (fHash != null)
-                {
-                    var single = await fHash.Lazy.Hash(token);
-                    if (!string.IsNullOrWhiteSpace(single))
-                    {
-                        var newFHash = HashOneFile(algo, fi);
-                        var newFHashH = await newFHash.Lazy.Hash(token);
-                        fVerified = HashTool.VerifyHash(single, newFHashH);
-                    }
-                }
-                job.Result = $"[{aName}] {fVerified.GetText()}";
+                await VerifyFile(job, fi, aName, token, algo);
             }
             else if (job.Source is DirectoryInfo di)
             {
-                var newDHash = HashOneDir(algo, di);
-                var dHashes = ReadHashFile(newDHash.Path, aName, true);
-                var dVerified = new List<bool?>();
-                foreach (var dItem in dHashes)
-                {
-                    var dFound = newDHash.Hashes.FirstOrDefault(x => x.Path == dItem.Path);
-                    var dFirst = dFound == null ? null : await dFound.Lazy.Hash(token);
-                    var dSecond = await dItem.Lazy.Hash(token);
-                    dVerified.Add(HashTool.VerifyHash(dFirst, dSecond));
-                }
-                var debug = string.Join("|", dVerified.Select(d => d.GetText()[0]));
-                job.Result = $"[{aName}] {debug}";
+                await VerifyDir(job, di, aName, token, algo);
             }
+        }
+
+        public static async Task HashFile(Job job, FileInfo fi, string aName,
+            HashAlgorithm algo, CancellationToken token)
+        {
+            var fHash = HashOneFile(algo, fi);
+            await WriteHashFile(fHash.Path, aName, [fHash], false, token);
+            var fItem = await fHash.Lazy.Hash(token);
+            job.Result = $"[{aName}] {fItem[..18]}";
+        }
+
+        public static async Task HashDir(Job job, DirectoryInfo di, string aName,
+            HashAlgorithm algo, CancellationToken token)
+        {
+            var dHash = HashOneDir(algo, di);
+            await WriteHashFile(dHash.Path, aName, dHash.Hashes, true, token);
+            var dList = new List<string>();
+            foreach (var dItem in dHash.Hashes.Take(12))
+                dList.Add((await dItem.Lazy.Hash(token))[..2]);
+            job.Result = $"[{aName}] {string.Join("|", dList)}";
         }
 
         public static async Task DoHash(Job job, CancellationToken token)
@@ -75,19 +107,11 @@ namespace Bogaculta.Check
             var aName = algo.GetTypeName();
             if (job.Source is FileInfo fi)
             {
-                var fHash = HashOneFile(algo, fi);
-                await WriteHashFile(fHash.Path, aName, [fHash], false, token);
-                var fItem = await fHash.Lazy.Hash(token);
-                job.Result = $"[{aName}] {fItem[..18]}";
+                await HashFile(job, fi, aName, algo, token);
             }
             else if (job.Source is DirectoryInfo di)
             {
-                var dHash = HashOneDir(algo, di);
-                await WriteHashFile(dHash.Path, aName, dHash.Hashes, true, token);
-                var dList = new List<string>();
-                foreach (var dItem in dHash.Hashes.Take(12))
-                    dList.Add((await dItem.Lazy.Hash(token))[..2]);
-                job.Result = $"[{aName}] {string.Join("|", dList)}";
+                await HashDir(job, di, aName, algo, token);
             }
         }
 
