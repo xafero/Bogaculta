@@ -1,7 +1,15 @@
+using Bogaculta.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace Bogaculta.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase
     {
-        public string Greeting => "Welcome to Avalonia!";
+        [ObservableProperty] private string? _outputFolder;
+
+        public MainWindowViewModel()
+        {
+            OutputFolder = Paths.GetLastDrive().FullName;
+        }
     }
 }

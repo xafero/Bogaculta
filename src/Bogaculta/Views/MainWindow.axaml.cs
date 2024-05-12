@@ -1,12 +1,15 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Bogaculta.IO;
 using Bogaculta.Models;
 using Bogaculta.Tools;
+using Bogaculta.ViewModels;
 
 #pragma warning disable CS0618
 
@@ -85,17 +88,18 @@ namespace Bogaculta.Views
             }
         }
 
+        private IStorageProvider Sp => GetTopLevel(this)!.StorageProvider;
+
         private async void FileBox_OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            var sp = TopLevel.GetTopLevel(this)!.StorageProvider;
             var data = new DataObject();
 
             var point = e.GetCurrentPoint(sender as Control);
             if (point.Properties.IsRightButtonPressed)
             {
-                var folders = await sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                var folders = await Sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
-                    Title = "Choose folder"
+                    Title = "Choose input folder"
                 });
 
                 data.Set(DataFormats.Files, folders);
@@ -103,9 +107,9 @@ namespace Bogaculta.Views
                 return;
             }
 
-            var files = await sp.OpenFilePickerAsync(new FilePickerOpenOptions
+            var files = await Sp.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Choose file"
+                Title = "Choose input file"
             });
 
             data.Set(DataFormats.Files, files);
@@ -123,14 +127,11 @@ namespace Bogaculta.Views
         }
 
         private void AddFileOrFolder(Uri uri)
-        {
-            var path = uri.AbsolutePath;
-            AddFileOrFolder(path);
-        }
+            => AddFileOrFolder(uri.ToAbsolutePath());
 
         private void AddFileOrFolder(string path)
         {
-            path = Path.GetFullPath(path);
+            path = path.ToAbsolutePath();
             if (Directory.Exists(path))
             {
                 var dir = new DirectoryInfo(path);
@@ -140,8 +141,25 @@ namespace Bogaculta.Views
             else if (File.Exists(path))
             {
                 var file = new FileInfo(path);
+                var job = new Job();
                 // TODO ?!
             }
+        }
+
+        private MainWindowViewModel? Model => DataContext as MainWindowViewModel;
+
+        private async void OutFolder_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (Model == null)
+                return;
+            var folders = await Sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Choose output folder", AllowMultiple = false
+            });
+            var folder = folders.SingleOrDefault();
+            if (folder == null)
+                return;
+            Model.OutputFolder = folder.Path.ToAbsolutePath();
         }
     }
 }
