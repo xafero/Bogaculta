@@ -153,16 +153,17 @@ namespace Bogaculta.Views
         private void AddFileOrFolder(string path)
         {
             path = path.ToAbsolutePath();
+            var env = new OneEnv(Model?.OutputFolder!);
             if (Directory.Exists(path))
             {
                 var dir = new DirectoryInfo(path);
-                var job = new Job { Source = dir };
+                var job = new Job { Source = dir, Env = env };
                 Enlist(job);
             }
             else if (File.Exists(path))
             {
                 var file = new FileInfo(path);
-                var job = new Job { Source = file };
+                var job = new Job { Source = file, Env = env };
                 Enlist(job);
             }
         }

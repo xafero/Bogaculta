@@ -20,5 +20,7 @@ namespace Bogaculta.Models
         [ObservableProperty] private string _worker;
 
         [ObservableProperty] private string _result;
+
+        [ObservableProperty] private OneEnv _env;
     }
 }

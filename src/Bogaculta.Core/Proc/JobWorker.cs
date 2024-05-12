@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogaculta.Check;
+using Bogaculta.IO;
 using Bogaculta.Models;
 
 namespace Bogaculta.Proc
@@ -48,8 +49,7 @@ namespace Bogaculta.Proc
                     switch (task.Kind)
                     {
                         case JobKind.Move:
-                            HashTask.DoHash(task);
-                            // TODO Move?!
+                            FileTask.DoMove(task);
                             break;
                         case JobKind.Verify:
                             HashTask.DoVerify(task);
