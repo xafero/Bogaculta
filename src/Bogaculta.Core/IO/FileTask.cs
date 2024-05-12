@@ -15,12 +15,15 @@ namespace Bogaculta.IO
             {
                 var srcFile = Path.GetFullPath(fi.FullName);
                 var dstFile = Path.Combine(od, fi.Name);
+                dstFile = Path.GetFullPath(dstFile);
                 try
                 {
                     if (!File.Exists(srcFile))
                         throw new IOException($"'{srcFile}' does not exist!");
                     if (File.Exists(dstFile))
                         throw new IOException($"'{dstFile}' already exists!");
+                    using var fs = File.Create(dstFile);
+                    // TODO
                 }
                 catch (Exception e)
                 {
@@ -31,12 +34,15 @@ namespace Bogaculta.IO
             {
                 var srcDir = Path.GetFullPath(di.FullName);
                 var dstDir = Path.Combine(od, di.Name);
+                dstDir = Path.GetFullPath(dstDir);
                 try
                 {
-                    if (!File.Exists(srcDir))
+                    if (!Directory.Exists(srcDir))
                         throw new IOException($"'{srcDir}' does not exist!");
-                    if (File.Exists(dstDir))
+                    if (Directory.Exists(dstDir))
                         throw new IOException($"'{dstDir}' already exists!");
+                    Directory.CreateDirectory(dstDir);
+                    // TODO
                 }
                 catch (Exception e)
                 {
