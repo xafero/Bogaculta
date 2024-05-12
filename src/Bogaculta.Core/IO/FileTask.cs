@@ -1,4 +1,5 @@
 using System;
+using System.Formats.Tar;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,10 +43,12 @@ namespace Bogaculta.IO
             var srcDir = Path.GetFullPath(di.FullName);
             var dstDir = Path.Combine(od, di.Name);
             dstDir = Path.GetFullPath(dstDir);
+
             if (!Directory.Exists(srcDir))
                 throw new IOException($"'{srcDir}' does not exist!");
             if (Directory.Exists(dstDir))
                 throw new IOException($"'{dstDir}' already exists!");
+
             Directory.CreateDirectory(dstDir);
 
             // TODO ?!
@@ -56,13 +59,19 @@ namespace Bogaculta.IO
             var srcFile = Path.GetFullPath(fi.FullName);
             var dstFile = Path.Combine(od, fi.Name);
             dstFile = Path.GetFullPath(dstFile);
+
             if (!File.Exists(srcFile))
                 throw new IOException($"'{srcFile}' does not exist!");
             if (File.Exists(dstFile))
                 throw new IOException($"'{dstFile}' already exists!");
+
             await using var fInput = File.OpenRead(srcFile);
             await using var fOutput = File.Create(dstFile);
             await fInput.CopyToAsync(fOutput, token);
+
+            File.SetCreationTime(dstFile, File.GetCreationTime(srcFile));
+            File.SetLastAccessTime(dstFile, File.GetLastAccessTime(srcFile));
+            File.SetLastWriteTime(dstFile, File.GetLastWriteTime(srcFile));
 
             // TODO ?!
         }
