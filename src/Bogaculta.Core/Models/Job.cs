@@ -1,6 +1,9 @@
+using System.IO;
+
 namespace Bogaculta.Models
 {
-    public class Job
+    public sealed class Job
     {
+        public FileSystemInfo Source { get; set; }
     }
 }

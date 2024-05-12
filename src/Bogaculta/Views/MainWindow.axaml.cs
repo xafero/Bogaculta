@@ -141,14 +141,14 @@ namespace Bogaculta.Views
             if (Directory.Exists(path))
             {
                 var dir = new DirectoryInfo(path);
-                var job = new Job();
-                // TODO ?!
+                var job = new Job { Source = dir };
+                _worker?.Enqueue(job);
             }
             else if (File.Exists(path))
             {
                 var file = new FileInfo(path);
-                var job = new Job();
-                // TODO ?!
+                var job = new Job { Source = file };
+                _worker?.Enqueue(job);
             }
         }
 
