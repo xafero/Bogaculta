@@ -11,7 +11,8 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="Bogaculta"
-        Loaded="OnLoaded">
+        Loaded="OnLoaded"
+        Closing="OnClosing">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>

@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Bogaculta.IO;
 using Bogaculta.Models;
+using Bogaculta.Proc;
 using Bogaculta.Tools;
 using Bogaculta.ViewModels;
 
@@ -22,10 +22,14 @@ namespace Bogaculta.Views
             InitializeComponent();
         }
 
+        private JobWorker? _worker;
+
         private void OnLoaded(object? _, RoutedEventArgs e)
         {
             FileBox.AddHandler(DragDrop.DropEvent, OnDrop);
             FileBox.AddHandler(DragDrop.DragOverEvent, OnDragOver);
+            _worker = new JobWorker();
+            _worker.Start();
         }
 
         private void OnDragOver(object? sender, DragEventArgs e)
@@ -121,9 +125,11 @@ namespace Bogaculta.Views
             Quit();
         }
 
-        private void Quit()
+        private void Quit(bool doClose = true)
         {
-            Close();
+            _worker?.Stop();
+            if (doClose)
+                Close();
         }
 
         private void AddFileOrFolder(Uri uri)
@@ -160,6 +166,11 @@ namespace Bogaculta.Views
             if (folder == null)
                 return;
             Model.OutputFolder = folder.Path.ToAbsolutePath();
+        }
+
+        private void OnClosing(object? sender, WindowClosingEventArgs e)
+        {
+            Quit(false);
         }
     }
 }

@@ -48,5 +48,11 @@ namespace Bogaculta.Proc
                 }
             }
         }
+
+        public void Stop()
+        {
+            _token.Cancel();
+            _taskQueue.Clear();
+        }
     }
 }
