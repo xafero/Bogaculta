@@ -26,10 +26,22 @@ namespace Bogaculta.Views
 
         private void OnLoaded(object? _, RoutedEventArgs e)
         {
+            HashMove.IsChecked = true;
             FileBox.AddHandler(DragDrop.DropEvent, OnDrop);
             FileBox.AddHandler(DragDrop.DragOverEvent, OnDragOver);
             _worker = new JobWorker();
             _worker.Start();
+        }
+
+        private JobKind GetJobKind()
+        {
+            if (OnlyHash.IsChecked == true)
+                return JobKind.Hash;
+
+            if (HashMove.IsChecked == true)
+                return JobKind.Move;
+
+            return JobKind.Unspecified;
         }
 
         private void OnDragOver(object? sender, DragEventArgs e)
@@ -154,6 +166,8 @@ namespace Bogaculta.Views
 
         private void Enlist(Job job)
         {
+            if (job.Kind == JobKind.Unspecified)
+                job.Kind = GetJobKind();
             _worker?.Enqueue(job);
             Model?.Jobs.Insert(0, job);
         }

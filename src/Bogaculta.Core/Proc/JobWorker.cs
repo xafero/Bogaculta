@@ -47,7 +47,11 @@ namespace Bogaculta.Proc
                     task.Worker = $"{threadId}";
                     switch (task.Kind)
                     {
-                        case JobKind.Sha256:
+                        case JobKind.Move:
+                            HashTask.DoHash(task);
+                            // TODO Move?!
+                            break;
+                        case JobKind.Hash:
                             HashTask.DoHash(task);
                             break;
                         default:

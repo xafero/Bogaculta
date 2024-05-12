@@ -4,6 +4,8 @@ namespace Bogaculta.Models
     {
         Unspecified = 0,
 
-        Sha256
+        Hash,
+
+        Move
     }
 }
