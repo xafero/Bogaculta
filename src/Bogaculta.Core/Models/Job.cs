@@ -15,5 +15,9 @@ namespace Bogaculta.Models
 
         public string Name => (Source as FileInfo)?.Name ??
                               (Source as DirectoryInfo)?.Name ?? None;
+
+        public string Worker { get; set; }
+
+        public string Result { get; set; }
     }
 }

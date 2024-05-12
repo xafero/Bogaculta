@@ -52,9 +52,11 @@
             x:Name="LogGrid" IsReadOnly="True" AutoGenerateColumns="False"
             ItemsSource="{Binding Jobs}" Margin="15">
 		    <DataGrid.Columns>
-			    <DataGridTextColumn Header="Kind" Width="*" Binding="{Binding Kind}"></DataGridTextColumn>
-			    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}"></DataGridTextColumn>
-			    <DataGridTextColumn Header="Parent" Width="*" Binding="{Binding Parent}"></DataGridTextColumn>
+			    <DataGridTextColumn Header="Kind" Width="Auto" Binding="{Binding Kind}" />
+			    <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}" />
+			    <DataGridTextColumn Header="Parent" Width="Auto" Binding="{Binding Parent}" />
+                <DataGridTextColumn Header="#" Width="Auto" Binding="{Binding Worker}" />
+                <DataGridTextColumn Header="Result" Width="Auto" Binding="{Binding Result}" />
 		    </DataGrid.Columns>
 		</DataGrid>
 

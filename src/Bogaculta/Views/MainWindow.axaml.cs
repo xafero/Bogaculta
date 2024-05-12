@@ -142,14 +142,20 @@ namespace Bogaculta.Views
             {
                 var dir = new DirectoryInfo(path);
                 var job = new Job { Source = dir };
-                _worker?.Enqueue(job);
+                Enlist(job);
             }
             else if (File.Exists(path))
             {
                 var file = new FileInfo(path);
                 var job = new Job { Source = file };
-                _worker?.Enqueue(job);
+                Enlist(job);
             }
+        }
+
+        private void Enlist(Job job)
+        {
+            _worker?.Enqueue(job);
+            Model?.Jobs.Insert(0, job);
         }
 
         private MainWindowViewModel? Model => DataContext as MainWindowViewModel;

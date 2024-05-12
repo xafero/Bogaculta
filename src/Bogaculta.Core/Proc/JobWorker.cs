@@ -43,7 +43,7 @@ namespace Bogaculta.Proc
                     var thread = Thread.CurrentThread;
                     var threadId = thread.ManagedThreadId;
 
-                    Console.WriteLine($"Thread {threadId} processes task {task}");
+                    task.Worker = $"{threadId}";
                     Thread.Sleep(100);
                 }
             }
