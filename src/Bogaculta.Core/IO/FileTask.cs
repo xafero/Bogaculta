@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Bogaculta.Models;
+using Bogaculta.Proc;
 
 namespace Bogaculta.IO
 {
@@ -23,7 +24,7 @@ namespace Bogaculta.IO
                 }
                 catch (Exception e)
                 {
-                    job.Result = e.Message;
+                    job.SetError(e.Message);
                 }
             }
             else if (job.Source is DirectoryInfo di)
@@ -39,7 +40,7 @@ namespace Bogaculta.IO
                 }
                 catch (Exception e)
                 {
-                    job.Result = e.Message;
+                    job.SetError(e.Message);
                 }
             }
         }
