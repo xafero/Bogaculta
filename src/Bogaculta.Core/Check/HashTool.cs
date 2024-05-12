@@ -2,6 +2,8 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Bogaculta.Check
 {
@@ -12,9 +14,10 @@ namespace Bogaculta.Check
             return SHA256.Create();
         }
 
-        public static string GetHash(this HashAlgorithm algorithm, Stream stream)
+        public static async Task<string> GetHash(this HashAlgorithm algorithm, Stream stream,
+            CancellationToken token)
         {
-            var data = algorithm.ComputeHash(stream);
+            var data = await algorithm.ComputeHashAsync(stream, token);
             var builder = new StringBuilder();
             foreach (var @byte in data)
                 builder.Append(@byte.ToString("x2"));

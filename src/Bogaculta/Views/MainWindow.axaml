@@ -45,7 +45,7 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Output directory:" Margin="15" 
                    VerticalAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="1" Margin="15"
-                 Text="{Binding OutputFolder}" IsReadOnly="True" />
+                 Text="{Binding OutputFolder}" IsReadOnly="False" />
         <Button Grid.Row="1" Grid.Column="2" Content="..." Margin="15"
                 Click="OutFolder_OnClick" />
 

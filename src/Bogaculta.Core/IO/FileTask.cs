@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Bogaculta.Models;
 using Bogaculta.Proc;
 
@@ -7,7 +9,7 @@ namespace Bogaculta.IO
 {
     internal static class FileTask
     {
-        public static void DoMove(Job job)
+        public static async Task DoMove(Job job, CancellationToken token)
         {
             var env = job.Env;
             var od = Path.GetFullPath(env.OutputDir);
@@ -22,8 +24,11 @@ namespace Bogaculta.IO
                         throw new IOException($"'{srcFile}' does not exist!");
                     if (File.Exists(dstFile))
                         throw new IOException($"'{dstFile}' already exists!");
-                    using var fs = File.Create(dstFile);
-                    // TODO
+                    await using var fInput = File.OpenRead(srcFile);
+                    await using var fOutput = File.Create(dstFile);
+                    await fInput.CopyToAsync(fOutput, token);
+
+                    // TODO ?!
                 }
                 catch (Exception e)
                 {
@@ -42,7 +47,8 @@ namespace Bogaculta.IO
                     if (Directory.Exists(dstDir))
                         throw new IOException($"'{dstDir}' already exists!");
                     Directory.CreateDirectory(dstDir);
-                    // TODO
+
+                    // TODO ?!
                 }
                 catch (Exception e)
                 {

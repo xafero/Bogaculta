@@ -1,4 +1,4 @@
 ﻿namespace Bogaculta.Check
 {
-    public record OneHash(string Path, string Hash);
+    public record OneHash(string Path, LazyHash Lazy);
 }

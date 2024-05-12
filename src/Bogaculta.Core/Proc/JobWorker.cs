@@ -36,7 +36,7 @@ namespace Bogaculta.Proc
             }
         }
 
-        private void Consume()
+        private async void Consume()
         {
             while (!_token.IsCancellationRequested)
             {
@@ -49,13 +49,13 @@ namespace Bogaculta.Proc
                     switch (task.Kind)
                     {
                         case JobKind.Move:
-                            FileTask.DoMove(task);
+                            await FileTask.DoMove(task, _token.Token);
                             break;
                         case JobKind.Verify:
-                            HashTask.DoVerify(task);
+                            await HashTask.DoVerify(task, _token.Token);
                             break;
                         case JobKind.Hash:
-                            HashTask.DoHash(task);
+                            await HashTask.DoHash(task, _token.Token);
                             break;
                         default:
                             task.SetError("Kind is unspecified!");
