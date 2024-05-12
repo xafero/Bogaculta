@@ -55,9 +55,11 @@
                     Orientation="Horizontal" Margin="10,0,0,0">
             <RadioButton x:Name="OnlyHash" GroupName="Mode" 
                          Margin="5" Padding="5,5,15,5">Hash</RadioButton>
+            <RadioButton x:Name="OnlyVerify" GroupName="Mode"
+                         Margin="5" Padding="5,5,15,5">Verify</RadioButton>
             <RadioButton x:Name="HashMove" GroupName="Mode" 
-                         Margin="5" Padding="5,5,15,5">Hash+Move</RadioButton>
-        </StackPanel>
+                         Margin="5" Padding="5,5,15,5">Move</RadioButton>
+		</StackPanel>
 
 		<DataGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
             x:Name="LogGrid" IsReadOnly="True" AutoGenerateColumns="False"

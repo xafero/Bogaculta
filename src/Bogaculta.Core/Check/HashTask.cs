@@ -9,6 +9,52 @@ namespace Bogaculta.Check
 {
     internal static class HashTask
     {
+        private static IEnumerable<OneHash> ReadHashFile(string path, string ext,
+            bool isDir, char mode = '*')
+        {
+            var rel = isDir ? Path.Combine(path, "_") : path;
+            var tmp = $".{ext}";
+            if (!path.EndsWith(tmp))
+                path += tmp;
+            if (!File.Exists(path))
+                yield break;
+            using var reader = File.OpenText(path);
+            while (reader.ReadLine() is { } line)
+            {
+                var parts = line.Trim().Split($" {mode}");
+                var hash = parts.First().Trim();
+                var local = parts.Last().Trim();
+                var full = Paths.FindRelative(rel, local);
+                yield return new OneHash(full, hash);
+            }
+        }
+
+        public static void DoVerify(Job job)
+        {
+            using var algo = HashTool.GetHashAlgo();
+            var aName = algo.GetTypeName();
+            if (job.Source is FileInfo fi)
+            {
+                var newFHash = HashOneFile(algo, fi);
+                var fHashes = ReadHashFile(newFHash.Path, aName, false);
+                var single = fHashes.SingleOrDefault()?.Hash;
+                var fVerified = HashTool.VerifyHash(single, newFHash.Hash);
+                job.Result = $"[{aName}] {fVerified.GetText()}";
+            }
+            else if (job.Source is DirectoryInfo di)
+            {
+                var newDHash = HashOneDir(algo, di);
+                var dHashes = ReadHashFile(newDHash.Path, aName, true);
+                var dVerified = dHashes.Select(dh =>
+                {
+                    var dFound = newDHash.Hashes.FirstOrDefault(x => x.Path == dh.Path);
+                    return HashTool.VerifyHash(dFound?.Hash, dh.Hash);
+                });
+                var debug = string.Join("|", dVerified.Select(d => d.GetText()[0]));
+                job.Result = $"[{aName}] {debug}";
+            }
+        }
+
         public static void DoHash(Job job)
         {
             using var algo = HashTool.GetHashAlgo();

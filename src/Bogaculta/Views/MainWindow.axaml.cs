@@ -38,6 +38,9 @@ namespace Bogaculta.Views
             if (OnlyHash.IsChecked == true)
                 return JobKind.Hash;
 
+            if (OnlyVerify.IsChecked == true)
+                return JobKind.Verify;
+
             if (HashMove.IsChecked == true)
                 return JobKind.Move;
 

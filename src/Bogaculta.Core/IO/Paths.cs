@@ -39,5 +39,12 @@ namespace Bogaculta.IO
                 .TrimStart('/', '\\');
             return @short;
         }
+
+        public static string FindRelative(string @ref, string local)
+        {
+            var dir = Path.GetDirectoryName(Path.GetFullPath(@ref))!;
+            var file = Path.Combine(dir, local);
+            return file;
+        }
     }
 }

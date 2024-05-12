@@ -21,14 +21,10 @@ namespace Bogaculta.Check
             return builder.ToString();
         }
 
-        public static bool VerifyHash(this HashAlgorithm algorithm, Stream stream, string hash)
+        public static bool? VerifyHash(string reHashed, string hash)
         {
-            var reHashed = GetHash(algorithm, stream);
-            return VerifyHash(reHashed, hash);
-        }
-
-        public static bool VerifyHash(string reHashed, string hash)
-        {
+            if (reHashed == null || hash == null)
+                return null;
             var comparer = StringComparer.OrdinalIgnoreCase;
             return comparer.Compare(reHashed, hash) == 0;
         }

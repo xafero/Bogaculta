@@ -9,5 +9,11 @@ namespace Bogaculta.IO
             return obj.GetType().FullName?.Split('.')
                 .Last().Split('+', 2)[0].ToLowerInvariant();
         }
+
+        public static string GetText(this bool? value)
+        {
+            if (value == null) return "?";
+            return value.Value ? "ok" : "fail";
+        }
     }
 }

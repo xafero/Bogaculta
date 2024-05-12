@@ -51,6 +51,9 @@ namespace Bogaculta.Proc
                             HashTask.DoHash(task);
                             // TODO Move?!
                             break;
+                        case JobKind.Verify:
+                            HashTask.DoVerify(task);
+                            break;
                         case JobKind.Hash:
                             HashTask.DoHash(task);
                             break;

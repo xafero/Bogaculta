@@ -6,6 +6,8 @@ namespace Bogaculta.Models
 
         Hash,
 
+        Verify,
+
         Move
     }
 }
