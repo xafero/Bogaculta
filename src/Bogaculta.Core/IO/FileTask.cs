@@ -30,7 +30,7 @@ namespace Bogaculta.IO
             {
                 try
                 {
-                    await MoveDir(od, di, token);
+                    await MoveDir(od, di, job, token);
                 }
                 catch (Exception e)
                 {
@@ -39,8 +39,12 @@ namespace Bogaculta.IO
             }
         }
 
-        private static async Task MoveDir(string od, DirectoryInfo di, CancellationToken token)
+        private static async Task MoveDir(string od, DirectoryInfo di, Job job,
+            CancellationToken token)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             var srcDir = Path.GetFullPath(di.FullName);
             var dstDir = Path.Combine(od, di.Name);
             dstDir = Path.GetFullPath(dstDir);
@@ -51,6 +55,25 @@ namespace Bogaculta.IO
                 throw new IOException($"'{dstDir}' already exists!");
 
             Directory.CreateDirectory(dstDir);
+
+            const string pattern = "*.*";
+            const SearchOption opt = SearchOption.AllDirectories;
+            foreach (var srcFile in Directory.EnumerateFiles(srcDir, pattern, opt))
+            {
+                var dstFileName = srcFile.Replace(srcDir, string.Empty)
+                    .TrimStart('/', '\\');
+                var dstFile = Path.Combine(dstDir, dstFileName);
+                await CopyFile(srcFile, dstFile, token);
+            }
+
+
+
+
+            // var srcDirI = new DirectoryInfo(srcDir);
+            // await HashTask.HashDir(job, srcDirI, token);
+
+
+            ;
 
             // TODO ?!
         }
