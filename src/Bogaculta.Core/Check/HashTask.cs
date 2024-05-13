@@ -31,8 +31,14 @@ namespace Bogaculta.Check
             }
         }
 
+        public static async Task VerifyFile(Job job, FileInfo fi, CancellationToken token)
+        {
+            var (algo, aName) = GetAlgo();
+            await VerifyFile(job, fi, aName, algo, token);
+        }
+
         public static async Task VerifyFile(Job job, FileInfo fi, string aName,
-            CancellationToken token, HashAlgorithm algo)
+            HashAlgorithm algo, CancellationToken token)
         {
             var fVerified = default(bool?);
             var fHashes = ReadHashFile(fi.FullName, aName, false);
@@ -50,8 +56,14 @@ namespace Bogaculta.Check
             job.Result = $"[{aName}] {fVerified.GetText()}";
         }
 
+        public static async Task VerifyDir(Job job, DirectoryInfo di, CancellationToken token)
+        {
+            var (algo, aName) = GetAlgo();
+            await VerifyDir(job, di, aName, algo, token);
+        }
+
         public static async Task VerifyDir(Job job, DirectoryInfo di, string aName,
-            CancellationToken token, HashAlgorithm algo)
+            HashAlgorithm algo, CancellationToken token)
         {
             var newDHash = HashOneDir(algo, di);
             var dHashes = ReadHashFile(newDHash.Path, aName, true);
@@ -69,16 +81,27 @@ namespace Bogaculta.Check
 
         public static async Task DoVerify(Job job, CancellationToken token)
         {
-            using var algo = HashTool.GetHashAlgo();
-            var aName = algo.GetTypeName();
             if (job.Source is FileInfo fi)
             {
-                await VerifyFile(job, fi, aName, token, algo);
+                await VerifyFile(job, fi, token);
             }
             else if (job.Source is DirectoryInfo di)
             {
-                await VerifyDir(job, di, aName, token, algo);
+                await VerifyDir(job, di, token);
             }
+        }
+
+        public static (HashAlgorithm algo, string aName) GetAlgo()
+        {
+            var algo = HashTool.GetHashAlgo();
+            var aName = algo.GetTypeName();
+            return (algo, aName);
+        }
+
+        public static async Task HashFile(Job job, FileInfo fi, CancellationToken token)
+        {
+            var (algo, aName) = GetAlgo();
+            await HashFile(job, fi, aName, algo, token);
         }
 
         public static async Task HashFile(Job job, FileInfo fi, string aName,
@@ -88,6 +111,12 @@ namespace Bogaculta.Check
             await WriteHashFile(fHash.Path, aName, [fHash], false, token);
             var fItem = await fHash.Lazy.Hash(token);
             job.Result = $"[{aName}] {fItem[..18]}";
+        }
+
+        public static async Task HashDir(Job job, DirectoryInfo di, CancellationToken token)
+        {
+            var (algo, aName) = GetAlgo();
+            await HashDir(job, di, aName, algo, token);
         }
 
         public static async Task HashDir(Job job, DirectoryInfo di, string aName,
@@ -103,15 +132,13 @@ namespace Bogaculta.Check
 
         public static async Task DoHash(Job job, CancellationToken token)
         {
-            using var algo = HashTool.GetHashAlgo();
-            var aName = algo.GetTypeName();
             if (job.Source is FileInfo fi)
             {
-                await HashFile(job, fi, aName, algo, token);
+                await HashFile(job, fi, token);
             }
             else if (job.Source is DirectoryInfo di)
             {
-                await HashDir(job, di, aName, algo, token);
+                await HashDir(job, di, token);
             }
         }
 

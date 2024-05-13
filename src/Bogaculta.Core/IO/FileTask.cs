@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Bogaculta.Check;
 using Bogaculta.Models;
 using Bogaculta.Proc;
 
@@ -17,7 +19,7 @@ namespace Bogaculta.IO
             {
                 try
                 {
-                    await MoveFile(od, fi, token);
+                    await MoveFile(od, fi, job, token);
                 }
                 catch (Exception e)
                 {
@@ -53,26 +55,56 @@ namespace Bogaculta.IO
             // TODO ?!
         }
 
-        private static async Task MoveFile(string od, FileInfo fi, CancellationToken token)
+        private static async Task MoveFile(string od, FileInfo fi, Job job,
+            CancellationToken token)
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
             var srcFile = Path.GetFullPath(fi.FullName);
             var dstFile = Path.Combine(od, fi.Name);
             dstFile = Path.GetFullPath(dstFile);
 
+            await CopyFile(srcFile, dstFile, token);
+
+            var srcFileI = new FileInfo(srcFile);
+            await HashTask.HashFile(job, srcFileI, token);
+
+            var (_, aName) = HashTask.GetAlgo();
+            var srcFileH = $"{srcFile}.{aName}";
+            var dstFileH = $"{dstFile}.{aName}";
+            await CopyFile(srcFileH, dstFileH, token);
+
+            var dstFileI = new FileInfo(dstFile);
+            await HashTask.VerifyFile(job, dstFileI, token);
+
+            watch.Stop();
+
+            var tmp = $"[{aName}] {Strings.GetText(true)}";
+            if (job.Result.Equals(tmp))
+            {
+                job.Result = $"Move took {watch.Elapsed.TotalSeconds} s!";
+                File.Delete(srcFileI.FullName);
+                File.Delete(srcFileH);
+                return;
+            }
+            job.SetError("Move failed somehow!");
+        }
+
+        private static async Task CopyFile(string srcFile, string dstFile, CancellationToken token)
+        {
             if (!File.Exists(srcFile))
                 throw new IOException($"'{srcFile}' does not exist!");
             if (File.Exists(dstFile))
                 throw new IOException($"'{dstFile}' already exists!");
 
             await using var fInput = File.OpenRead(srcFile);
-            await using var fOutput = File.Create(dstFile);
+            await using var fOutput = File.Create(dstFile!);
             await fInput.CopyToAsync(fOutput, token);
 
             File.SetCreationTime(dstFile, File.GetCreationTime(srcFile));
             File.SetLastAccessTime(dstFile, File.GetLastAccessTime(srcFile));
             File.SetLastWriteTime(dstFile, File.GetLastWriteTime(srcFile));
-
-            // TODO ?!
         }
     }
 }
