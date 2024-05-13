@@ -18,7 +18,8 @@ namespace Bogaculta.Check
         public static async Task<string> GetHash(this HashAlgorithm algorithm, Stream stream,
             CancellationToken token)
         {
-            var data = await algorithm.ComputeHashAsync(stream.Count(), token);
+            var count = stream.Count();
+            var data = await algorithm.ComputeHashAsync(count, token);
             var builder = new StringBuilder();
             foreach (var @byte in data)
                 builder.Append(@byte.ToString("x2"));
