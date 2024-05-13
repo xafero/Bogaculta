@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogaculta.IO;
+using Bogaculta.Models;
 
 namespace Bogaculta.Check
 {
@@ -15,10 +16,10 @@ namespace Bogaculta.Check
             return SHA256.Create();
         }
 
-        public static async Task<string> GetHash(this HashAlgorithm algorithm, Stream stream,
-            CancellationToken token)
+        public static async Task<string> GetHash(this HashAlgorithm algorithm,
+            IJob job, Stream stream, CancellationToken token)
         {
-            var count = stream.Count();
+            var count = stream.Count(job);
             var data = await algorithm.ComputeHashAsync(count, token);
             var builder = new StringBuilder();
             foreach (var @byte in data)

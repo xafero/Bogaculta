@@ -1,9 +1,10 @@
 using System.IO;
+using Bogaculta.Proc;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Bogaculta.Models
 {
-    public partial class Job : ObservableObject
+    public partial class Job : ObservableObject, IJob
     {
         public const string None = "<?>";
 
@@ -22,5 +23,7 @@ namespace Bogaculta.Models
         [ObservableProperty] private string _result;
 
         [ObservableProperty] private OneEnv _env;
+
+        [ObservableProperty] private CountStream _tag;
     }
 }

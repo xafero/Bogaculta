@@ -48,7 +48,7 @@ namespace Bogaculta.Check
                 var single = await fHash.Lazy.Hash(token);
                 if (!string.IsNullOrWhiteSpace(single))
                 {
-                    var newFHash = HashOneFile(algo, fi);
+                    var newFHash = HashOneFile(algo, fi, job);
                     var newFHashH = await newFHash.Lazy.Hash(token);
                     fVerified = HashTool.VerifyHash(single, newFHashH);
                 }
@@ -65,7 +65,7 @@ namespace Bogaculta.Check
         public static async Task VerifyDir(Job job, DirectoryInfo di, string aName,
             HashAlgorithm algo, CancellationToken token)
         {
-            var newDHash = HashOneDir(algo, di);
+            var newDHash = HashOneDir(algo, di, job);
             var dHashes = ReadHashFile(newDHash.Path, aName, true);
             var dVerified = new List<bool?>();
             foreach (var dItem in dHashes)
@@ -107,7 +107,7 @@ namespace Bogaculta.Check
         public static async Task HashFile(Job job, FileInfo fi, string aName,
             HashAlgorithm algo, CancellationToken token)
         {
-            var fHash = HashOneFile(algo, fi);
+            var fHash = HashOneFile(algo, fi, job);
             await WriteHashFile(fHash.Path, aName, [fHash], false, token);
             var fItem = await fHash.Lazy.Hash(token);
             job.Result = $"[{aName}] {fItem[..18]}";
@@ -122,7 +122,7 @@ namespace Bogaculta.Check
         public static async Task HashDir(Job job, DirectoryInfo di, string aName,
             HashAlgorithm algo, CancellationToken token)
         {
-            var dHash = HashOneDir(algo, di);
+            var dHash = HashOneDir(algo, di, job);
             await WriteHashFile(dHash.Path, aName, dHash.Hashes, true, token);
             var dList = new List<string>();
             foreach (var dItem in dHash.Hashes.Take(12))
@@ -160,23 +160,23 @@ namespace Bogaculta.Check
             }
         }
 
-        private static MultiHash HashOneDir(HashAlgorithm algo, DirectoryInfo di)
+        private static MultiHash HashOneDir(HashAlgorithm algo, DirectoryInfo di, IJob job)
         {
             var fullPath = di.FullName;
             const SearchOption opt = SearchOption.AllDirectories;
             const string pattern = "*.*";
             var files = Directory.EnumerateFiles(fullPath, pattern, opt)
-                .Select(file => HashOneFile(algo, new FileInfo(file)));
+                .Select(file => HashOneFile(algo, new FileInfo(file), job));
             return new MultiHash(fullPath, files);
         }
 
-        private static OneHash HashOneFile(HashAlgorithm algo, FileInfo fi)
+        private static OneHash HashOneFile(HashAlgorithm algo, FileInfo fi, IJob job)
         {
             var fullPath = fi.FullName;
             return new OneHash(fullPath, new LazyHash(async token =>
             {
                 await using var file = File.OpenRead(fullPath);
-                var hash = await algo.GetHash(file, token);
+                var hash = await algo.GetHash(job, file, token);
                 return hash;
             }));
         }

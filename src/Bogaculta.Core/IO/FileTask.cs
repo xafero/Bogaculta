@@ -57,7 +57,7 @@ namespace Bogaculta.IO
 
             Directory.CreateDirectory(dstDir);
 
-            var count = await CopyDir(srcDir, dstDir, token);
+            var count = await CopyDir(job, srcDir, dstDir, token);
 
             var srcDirI = new DirectoryInfo(srcDir);
             await HashTask.HashDir(job, srcDirI, token);
@@ -65,7 +65,7 @@ namespace Bogaculta.IO
             var (_, aName) = HashTask.GetAlgo();
             var srcDirH = $"{srcDir}.{aName}";
             var dstDirH = $"{dstDir}.{aName}";
-            await CopyFile(srcDirH, dstDirH, token);
+            await CopyFile(job, srcDirH, dstDirH, token);
 
             var dstDirI = new DirectoryInfo(dstDir);
             await HashTask.VerifyDir(job, dstDirI, token);
@@ -85,7 +85,8 @@ namespace Bogaculta.IO
             job.SetError("Move failed somehow!");
         }
 
-        private static async Task<int> CopyDir(string srcDir, string dstDir, CancellationToken token)
+        private static async Task<int> CopyDir(IJob job, string srcDir, string dstDir,
+            CancellationToken token)
         {
             const string pattern = "*.*";
             const SearchOption opt = SearchOption.AllDirectories;
@@ -95,7 +96,7 @@ namespace Bogaculta.IO
                 var dstFileName = srcFile.Replace(srcDir, string.Empty)
                     .TrimStart('/', '\\');
                 var dstFile = Path.Combine(dstDir, dstFileName);
-                await CopyFile(srcFile, dstFile, token);
+                await CopyFile(job, srcFile, dstFile, token);
                 count++;
             }
             return count;
@@ -111,7 +112,7 @@ namespace Bogaculta.IO
             var dstFile = Path.Combine(od, fi.Name);
             dstFile = Path.GetFullPath(dstFile);
 
-            await CopyFile(srcFile, dstFile, token);
+            await CopyFile(job, srcFile, dstFile, token);
 
             var srcFileI = new FileInfo(srcFile);
             await HashTask.HashFile(job, srcFileI, token);
@@ -119,7 +120,7 @@ namespace Bogaculta.IO
             var (_, aName) = HashTask.GetAlgo();
             var srcFileH = $"{srcFile}.{aName}";
             var dstFileH = $"{dstFile}.{aName}";
-            await CopyFile(srcFileH, dstFileH, token);
+            await CopyFile(job, srcFileH, dstFileH, token);
 
             var dstFileI = new FileInfo(dstFile);
             await HashTask.VerifyFile(job, dstFileI, token);
@@ -137,7 +138,8 @@ namespace Bogaculta.IO
             job.SetError("Move failed somehow!");
         }
 
-        private static async Task CopyFile(string srcFile, string dstFile, CancellationToken token)
+        private static async Task CopyFile(IJob job, string srcFile, string dstFile,
+            CancellationToken token)
         {
             if (!File.Exists(srcFile))
                 throw new IOException($"'{srcFile}' does not exist!");
@@ -145,9 +147,9 @@ namespace Bogaculta.IO
                 throw new IOException($"'{dstFile}' already exists!");
 
             await using var fInputR = File.OpenRead(srcFile);
-            await using var fInput = fInputR.Count();
+            await using var fInput = fInputR.Count(job);
             await using var fOutputR = File.Create(dstFile!);
-            await using var fOutput = fOutputR.Count();
+            await using var fOutput = fOutputR.Count(job);
             await fInput.CopyToAsync(fOutput, token);
 
             File.SetCreationTime(dstFile, File.GetCreationTime(srcFile));

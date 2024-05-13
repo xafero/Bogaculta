@@ -67,8 +67,15 @@
 		    <DataGrid.Columns>
 			    <DataGridTextColumn Header="Kind" Width="Auto" Binding="{Binding Kind}" />
 			    <DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}" />
-			    <DataGridTextColumn Header="Parent" Width="Auto" Binding="{Binding Parent}" />
-                <DataGridTextColumn Header="#" Width="Auto" Binding="{Binding Worker}" />
+				<!-- 
+				<DataGridTextColumn Header="Parent" Width="Auto" Binding="{Binding Parent}" />
+				-->
+                <DataGridTextColumn Header="R" Width="Auto" Binding="{Binding Tag.ReadBytes}" />
+                <DataGridTextColumn Header="W" Width="Auto" Binding="{Binding Tag.WriteBytes}" />
+                <DataGridTextColumn Header="L" Width="Auto" Binding="{Binding Tag.FileSize}" />
+                <DataGridTextColumn Header="F" Width="Auto" Binding="{Binding Tag.FileName}" />
+
+				<DataGridTextColumn Header="#" Width="Auto" Binding="{Binding Worker}" />
                 <DataGridTextColumn Header="Result" Width="Auto" Binding="{Binding Result}" />
 		    </DataGrid.Columns>
 		</DataGrid>

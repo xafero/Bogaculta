@@ -9,7 +9,7 @@ namespace Bogaculta.Proc
     {
         private readonly Stream _real;
 
-        public CountStream(Stream real)
+        internal CountStream(Stream real)
         {
             _real = real;
 

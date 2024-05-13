@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogaculta.Check;
@@ -37,6 +38,18 @@ namespace Bogaculta.Proc
         }
 
         private async void Consume()
+        {
+            try
+            {
+                await ConsumeIn();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task ConsumeIn()
         {
             while (!_token.IsCancellationRequested)
             {
