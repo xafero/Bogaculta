@@ -10,18 +10,18 @@ namespace Bogaculta.Proc
 {
     public sealed class JobWorker
     {
-        private readonly ConcurrentQueue<Job> _taskQueue;
+        private readonly BlockingCollection<Job> _taskQueue;
         private readonly int _taskCount;
 
         public JobWorker()
         {
-            _taskQueue = new ConcurrentQueue<Job>();
+            _taskQueue = new BlockingCollection<Job>();
             _taskCount = Environment.ProcessorCount;
         }
 
         public void Enqueue(Job job)
         {
-            _taskQueue.Enqueue(job);
+            _taskQueue.Add(job);
         }
 
         private CancellationTokenSource _token;
@@ -40,7 +40,7 @@ namespace Bogaculta.Proc
         {
             while (!_token.IsCancellationRequested)
             {
-                if (_taskQueue.TryDequeue(out var task))
+                if (_taskQueue.Take(_token.Token) is { } task)
                 {
                     var thread = Thread.CurrentThread;
                     var threadId = thread.ManagedThreadId;
@@ -68,7 +68,7 @@ namespace Bogaculta.Proc
         public void Stop()
         {
             _token.Cancel();
-            _taskQueue.Clear();
+            _taskQueue.Dispose();
         }
     }
 }
