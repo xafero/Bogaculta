@@ -118,7 +118,7 @@ namespace Bogaculta.Views
             {
                 var folders = await Sp.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
-                    Title = "Choose input folder"
+                    Title = "Choose input folder", AllowMultiple = true
                 });
 
                 data.Set(DataFormats.Files, folders);
@@ -128,7 +128,7 @@ namespace Bogaculta.Views
 
             var files = await Sp.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Choose input file"
+                Title = "Choose input file", AllowMultiple = true
             });
 
             data.Set(DataFormats.Files, files);
