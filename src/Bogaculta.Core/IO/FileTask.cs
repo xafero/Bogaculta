@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Bogaculta.Check;
@@ -56,26 +57,48 @@ namespace Bogaculta.IO
 
             Directory.CreateDirectory(dstDir);
 
+            var count = await CopyDir(srcDir, dstDir, token);
+
+            var srcDirI = new DirectoryInfo(srcDir);
+            await HashTask.HashDir(job, srcDirI, token);
+
+            var (_, aName) = HashTask.GetAlgo();
+            var srcDirH = $"{srcDir}.{aName}";
+            var dstDirH = $"{dstDir}.{aName}";
+            await CopyFile(srcDirH, dstDirH, token);
+
+            var dstDirI = new DirectoryInfo(dstDir);
+            await HashTask.VerifyDir(job, dstDirI, token);
+
+            watch.Stop();
+
+            var t = string.Join("|", Enumerable.Repeat((bool?)true, count)
+                .Select(x => x.GetText()[0]));
+            var tmp = $"[{aName}] {t}";
+            if (job.Result.Equals(tmp))
+            {
+                job.Result = $"Move took {watch.Elapsed.TotalSeconds} s!";
+                Directory.Delete(srcDirI.FullName, recursive: true);
+                File.Delete(srcDirH);
+                return;
+            }
+            job.SetError("Move failed somehow!");
+        }
+
+        private static async Task<int> CopyDir(string srcDir, string dstDir, CancellationToken token)
+        {
             const string pattern = "*.*";
             const SearchOption opt = SearchOption.AllDirectories;
+            var count = 0;
             foreach (var srcFile in Directory.EnumerateFiles(srcDir, pattern, opt))
             {
                 var dstFileName = srcFile.Replace(srcDir, string.Empty)
                     .TrimStart('/', '\\');
                 var dstFile = Path.Combine(dstDir, dstFileName);
                 await CopyFile(srcFile, dstFile, token);
+                count++;
             }
-
-
-
-
-            // var srcDirI = new DirectoryInfo(srcDir);
-            // await HashTask.HashDir(job, srcDirI, token);
-
-
-            ;
-
-            // TODO ?!
+            return count;
         }
 
         private static async Task MoveFile(string od, FileInfo fi, Job job,
