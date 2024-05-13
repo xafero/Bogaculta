@@ -22,8 +22,8 @@ namespace Bogaculta.Proc
 
         [ObservableProperty] private string _fileName;
         [ObservableProperty] private long _fileSize;
-        [ObservableProperty] private int _readBytes;
-        [ObservableProperty] private int _writeBytes;
+        [ObservableProperty] private long _readBytes;
+        [ObservableProperty] private long _writeBytes;
 
         public override void Flush()
         {
