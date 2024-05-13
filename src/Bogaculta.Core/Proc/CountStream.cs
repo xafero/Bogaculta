@@ -1,19 +1,29 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Bogaculta.Proc
 {
-    public sealed class CountStream : Stream
+    [ObservableObject]
+    public sealed partial class CountStream : Stream
     {
         private readonly Stream _real;
 
         public CountStream(Stream real)
         {
             _real = real;
+
+            if (_real is FileStream fs)
+            {
+                FileName = fs.Name;
+                FileSize = fs.Length;
+            }
         }
 
-        public int ReadBytes { get; private set; }
-        public int WriteBytes { get; private set; }
+        [ObservableProperty] private string _fileName;
+        [ObservableProperty] private long _fileSize;
+        [ObservableProperty] private int _readBytes;
+        [ObservableProperty] private int _writeBytes;
 
         public override void Flush()
         {
