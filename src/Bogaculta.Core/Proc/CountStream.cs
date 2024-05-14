@@ -35,7 +35,7 @@ namespace Bogaculta.Proc
 
         private double CalcPercent(long value)
         {
-            return value / (_fileSize * 1.0);
+            return Math.Round((value / (FileSize * 1.0)) * 100, 4);
         }
 
         private long ReadBytes
