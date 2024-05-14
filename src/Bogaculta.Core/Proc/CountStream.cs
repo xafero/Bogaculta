@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -9,7 +10,7 @@ namespace Bogaculta.Proc
     {
         private readonly Stream _real;
 
-        internal CountStream(Stream real)
+        internal CountStream(Stream real, Stream ctx)
         {
             _real = real;
 
@@ -18,12 +19,36 @@ namespace Bogaculta.Proc
                 FileName = fs.Name;
                 FileSize = fs.Length;
             }
+
+            if (ctx is { } cs)
+            {
+                FileSize = Math.Max(FileSize, cs.Length);
+            }
         }
 
         [ObservableProperty] private string _fileName;
         [ObservableProperty] private long _fileSize;
-        [ObservableProperty] private long _readBytes;
-        [ObservableProperty] private long _writeBytes;
+        private long _readBytes;
+        private long _writeBytes;
+        [ObservableProperty] private double _readAmount;
+        [ObservableProperty] private double _writeAmount;
+
+        private double CalcPercent(long value)
+        {
+            return value / (_fileSize * 1.0);
+        }
+
+        private long ReadBytes
+        {
+            get => _readBytes;
+            set => ReadAmount = CalcPercent(_readBytes = value);
+        }
+
+        private long WriteBytes
+        {
+            get => _writeBytes;
+            set => WriteAmount = CalcPercent(_writeBytes = value);
+        }
 
         public override void Flush()
         {

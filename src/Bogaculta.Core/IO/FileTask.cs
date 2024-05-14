@@ -147,10 +147,9 @@ namespace Bogaculta.IO
                 throw new IOException($"'{dstFile}' already exists!");
 
             await using var fInputR = File.OpenRead(srcFile);
-            await using var fInput = fInputR.Count(job);
             await using var fOutputR = File.Create(dstFile!);
-            await using var fOutput = fOutputR.Count(job);
-            await fInput.CopyToAsync(fOutput, token);
+            await using var fOutput = fOutputR.Count(job, fInputR);
+            await fInputR.CopyToAsync(fOutput, token);
 
             File.SetCreationTime(dstFile, File.GetCreationTime(srcFile));
             File.SetLastAccessTime(dstFile, File.GetLastAccessTime(srcFile));
