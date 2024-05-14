@@ -146,6 +146,10 @@ namespace Bogaculta.IO
             if (File.Exists(dstFile))
                 throw new IOException($"'{dstFile}' already exists!");
 
+            var dstDir = Path.GetDirectoryName(dstFile);
+            if (!string.IsNullOrWhiteSpace(dstDir) && !Directory.Exists(dstDir))
+                Directory.CreateDirectory(dstDir);
+
             await using var fInputR = File.OpenRead(srcFile);
             await using var fOutputR = File.Create(dstFile!);
             await using var fOutput = fOutputR.Count(job, fInputR);
